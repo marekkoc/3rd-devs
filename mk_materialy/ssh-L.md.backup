@@ -1,0 +1,63 @@
+Ta linia to polecenie SSH z przekierowaniem portów (port forwarding). Wyjaśnię każdą część:
+
+**`ssh`** - program klienta SSH do nawiązywania bezpiecznych połączeń
+
+**`-L 3690:127.0.0.1:3690`** - opcja Local Port Forwarding, która tworzy tunel SSH:
+- `3690` (pierwszy) - port lokalny na Twojej maszynie
+- `127.0.0.1:3690` - adres i port docelowy na zdalnym serwerze
+- `127.0.0.1` oznacza "localhost" na zdalnym serwerze
+
+**`mk@212.191.87.172`** - dane logowania:
+- `mk` - nazwa użytkownika
+- `212.191.87.172` - adres IP serwera zdalnego
+
+**Co to robi:**
+Po wykonaniu tego polecenia, gdy połączysz się z `localhost:3690` na swojej maszynie, ruch zostanie przekierowany przez bezpieczny tunel SSH do portu 3690 na zdalnym serwerze (212.191.87.172).
+
+To przydatne gdy:
+- Chcesz uzyskać dostęp do usługi działającej na zdalnym serwerze
+- Usługa jest dostępna tylko lokalnie na zdalnej maszynie
+- Chcesz bezpiecznie przesyłać dane przez szyfrowany tunel
+
+Port 3690 to standardowy port dla SVN (Subversion), więc prawdopodobnie chodzi o dostęp do repozytorium SVN.
+# W jakim celu są takie połączenia?
+
+Połączenia SSH z przekierowaniem portów mają kilka ważnych zastosowań:
+
+## Bezpieczeństwo
+- **Szyfrowanie ruchu** - wszystkie dane przesyłane przez tunel są zaszyfrowane
+- **Dostęp do usług bez publicznej ekspozycji** - serwer może nie udostępniać usługi publicznie w internecie
+- **Ominięcie firewalli** - gdy bezpośredni dostęp do portu jest zablokowany
+
+## Praktyczne zastosowania
+
+**Dostęp do baz danych:**
+```bash
+ssh -L 5432:localhost:5432 user@server  # PostgreSQL
+ssh -L 3306:localhost:3306 user@server  # MySQL
+```
+
+**Dostęp do aplikacji webowych:**
+```bash
+ssh -L 8080:localhost:80 user@server    # aplikacja na porcie 80
+```
+
+**Repozytoria kodu:**
+```bash
+ssh -L 3690:localhost:3690 user@server  # SVN (jak w Twoim przykładzie)
+```
+
+**Monitorowanie i administracja:**
+```bash
+ssh -L 9090:localhost:9090 user@server  # Prometheus
+ssh -L 3000:localhost:3000 user@server  # Grafana
+```
+
+## Scenariusze użycia
+
+**Praca zdalna** - dostęp do wewnętrznych systemów firmy
+**Rozwój aplikacji** - testowanie na zdalnych serwerach
+**Administracja** - bezpieczne zarządzanie usługami
+**Omijanie ograniczeń sieciowych** - gdy ISP/firewall blokuje pewne połączenia
+
+W Twoim przypadku z portem 3690 prawdopodobnie chodzi o bezpieczny dostęp do repozytorium SVN, które jest dostępne tylko lokalnie na serwerze.
